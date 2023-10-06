@@ -18,6 +18,7 @@ Formatting details:
 * Removes "Draft" tiddlers
 * Ignores tiddly icons and colors
 * We use a presumed [KMD style](https://files.totalimagine.com/PDF/KnowledgeMarkdownWorkflow-Presentation_No.1_Rev.0.5.pdf) markdown notation to deal with Tags, etc. This format is not customizable outside the source code, and I do not intend to make it more complicated.
+* Supports priority sorting of "Dated" items
 
 ## Features
 

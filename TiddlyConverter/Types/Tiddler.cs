@@ -32,7 +32,7 @@ namespace TiddlyConverter.Types
         /// </summary>
         public string Type;
         /// <summary>
-        /// Don't know what this is; Looks empty for all of the tiddlers we have
+        /// THis is the arbitrary metadata we can assign to Tiddlers; Empty for all of the tiddlers we have
         /// </summary>
         public string List;
 
@@ -79,15 +79,11 @@ namespace TiddlyConverter.Types
         /// </summary>
         public static string[] ParseCommandLineArguments(string commandLineString)
         {
-            if (commandLineString.StartsWith('#')) // Escape comments since Csv doens't provide options to keep the comment lines
-            {
-                commandLineString = $"\"{commandLineString}";
-                commandLineString = commandLineString.Insert(commandLineString.IndexOf(' '), "\"");
-            }
             return Csv.CsvReader.ReadFromText($"{commandLineString}", new Csv.CsvOptions()
             {
                 HeaderMode = Csv.HeaderMode.HeaderAbsent,
-                Separator = ' '
+                Separator = ' ',
+                SkipRow = (row, index) => false, // Disable skipping "comments" for some of the items might start with a `#` as tag name
             }).First().Values;
         }
         #endregion
