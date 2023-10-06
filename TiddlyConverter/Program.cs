@@ -1,124 +1,84 @@
 ﻿using Newtonsoft.Json;
-using System.Drawing;
 using System.Text;
-using System.Text.RegularExpressions;
+using TiddlyConverter.Types;
 using Console = Colorful.Console;
 
 namespace TiddlyConverter
 {
-    public class Tiddler
-    {
-        public string Text;
-        public string Title;
-        public string Tags;
-        public string Modified;
-        public string Created;
-
-        public string Icon;
-        public string Color;
-
-        public DateTime CreatedDate => DateTime.ParseExact(Created[..8], "yyyyMMdd", null);
-        public DateTime ModifiedDate => DateTime.ParseExact(Modified[..8], "yyyyMMdd", null);
-    }
     internal static class Program
     {
         static void Main(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length < 2)
             {
-                Console.WriteLine();
+                Console.WriteLine("""
+                    TiddlyConverter <Source JSON File> <Output File/Folder> [<Additional Toggles>]
+                    If <Output File/Folder> ends in .md, then it outputs a single MD file, otherwise it creates loose files in the folder.
+                    Additional toggles: 
+                      --KeepDrafts
+                      --HighlightLinks
+                    """);
                 return;
             }
             string jsonFile = args[0];
-            string outputFile = args[1];
+            string outputFileOrFolderPath = args[1];
+            ProgramOptions options = ParseAdditionalOptions(args.Skip(2));
 
             Tiddler[] wiki = JsonConvert.DeserializeObject<Tiddler[]>(File.ReadAllText(jsonFile));
-            // Filtering
-            foreach (var item in wiki.Where(t => Regex.IsMatch(t.Title, "Draft of '.*?'")))
-                Console.WriteLine($"Ignored {item.Title}: {(string.IsNullOrEmpty(item.Text) ? "(Empty)" : item.Text)}", Color.Goldenrod);
-            var filtered = wiki.Where(t => !Regex.IsMatch(t.Title, "Draft of '.*?'")).ToArray();
-            // Summary
-            Dictionary<string, string[]> tiddlerTags = filtered.ToDictionary(f => f.Title, f => ParseTags(f.Tags));
-            HashSet<string> tags = new HashSet<string>(tiddlerTags.SelectMany(ts => ts.Value));
+            TiddlerToMDConverter converter = new TiddlerToMDConverter(wiki);
+            MarkdownDocument[] mds = converter.Convert(options);
+            // Statistics summary
+            StringBuilder summary = new();
+            summary.AppendLine("Number of tiddlers: " + converter.UsefulTiddlers);
+            summary.AppendLine("Number of tags: " + converter.UniqueTags.Count);
+            summary.AppendLine("Tags: " + string.Join(", ", converter.UniqueTags
+                .OrderBy(t => t)
+                .Select(t =>
+                {
+                    int count = wiki.Where(w => w.TagsArray.Contains(t)).Count();
+                    return $"{t} ({count})";
+                }))
+            );
+            Console.WriteLine(summary.ToString());
 
-            StringBuilder builder = new StringBuilder();
-            // Statistics
-            builder.AppendLine("Number of tiddlers: " + filtered.Length + "  ");
-            builder.AppendLine("Number of tags: " + tags.Count + "  ");
-            builder.AppendLine("Tags: " + string.Join(", ", tags.OrderBy(t => t).Select(t =>
+            // Enumerate outputs
+            if (outputFileOrFolderPath.EndsWith(".md"))
+                File.WriteAllText(outputFileOrFolderPath, $"""
+                    <!-- Generated using Tiddly Converter.
+                    {summary.ToString().Trim()}
+                    -->
+
+
+                    """);
+            foreach (var item in mds.OrderBy(t => t.CreateDate))
             {
-                int count = tiddlerTags.Where(ts => ts.Value.Contains(t)).Count();
-                return $"{t} ({count})";
-            })) + "  ");
-            builder.AppendLine();
-            // Enumerate tiddlers
-            foreach (Tiddler tiddler in filtered.OrderBy(t => t.CreatedDate).ToArray())
-            {
-                builder.AppendLine($"# {tiddler.Title}");
-                builder.AppendLine();
-                if (!string.IsNullOrWhiteSpace(tiddler.Tags))
-                    builder.AppendLine($"Tags: {FormatTiddlyWikiTags(tiddler.Tags)}");
-                builder.AppendLine();
-                builder.AppendLine(FormatTiddlyWikiToMD(tiddler.Text, filtered));
-                builder.AppendLine();
+                if (outputFileOrFolderPath.EndsWith(".md"))
+                    item.Save(outputFileOrFolderPath, true);
+                else
+                    item.Save(Path.Combine(outputFileOrFolderPath, item.Title), false);
             }
-            File.WriteAllText(outputFile, builder.ToString());
         }
 
-        static string[] ParseTags(string tiddlyWikiTags)
+        private static ProgramOptions ParseAdditionalOptions(IEnumerable<string> arguments)
         {
-            if (string.IsNullOrWhiteSpace(tiddlyWikiTags))
-                return Array.Empty<string>();
-            string escaped = Regex.Replace(tiddlyWikiTags, @"\[\[(.*?)\]\]", "\"$1\"");
-            return ParseCommandLineArguments(escaped);
-        }
-        static string FormatTiddlyWikiTags(string tags)
-        {
-            string[] items = ParseTags(tags);
-            return $"\"{string.Join(", ", items)}\"";
-        }
-        static string FormatTiddlyWikiToMD(string text, Tiddler[] catalog)
-        {
-            text = Regex.Replace(text, "''(.*?)''", "**$1**"); // Replace bolds
-            text = Regex.Replace(text, "//(.*?)//", "*$1*"); // Replace italics
-            text = Regex.Replace(text, "^(#) (.*)$", "1. $2", RegexOptions.Multiline); // Replace enumerations
-            text = Regex.Replace(text, "<<<(.*?)<<<", m =>
+            ProgramOptions options = new();
+            foreach (var argument in arguments)
             {
-                string content = m.Groups[1].Value.Trim();
-                if (content.StartsWith(".tc-big-quote"))
-                    content = content.Substring(".tc-big-quote".Length).Trim();
-                return Regex.Replace(content, $"^(.*)$", "> $1", RegexOptions.Multiline);
-            }, RegexOptions.Singleline); // Replace quotes
-            text = Regex.Replace(text, "^(!+) (.*)$", m =>
-            {
-                string formatter = m.Groups[1].Value.Replace("!", "#");
-                string header = m.Groups[2].Value;
-                return $"#{formatter} {header}\n";
-            }, RegexOptions.Multiline); // Replace headers
-            text = Regex.Replace(text, @"^(#+) \*\*(.*)\*\*$", "$1 $2", RegexOptions.Multiline); // Redundant header emphasis
-            text = Regex.Replace(text, "<div class=\"tc-table-of-contents\">(.*?)</div>", m =>
-            {
-                string content = m.Groups[1].Value.Trim();
-                string key = Regex.Match(content, "<<toc-selective-expandable '(.*?)'>>").Groups[1].Value;
-                return $"TABLE OF CONTENTS: {key}";
-            }, RegexOptions.Singleline); // Replace table of contents
-            text = Regex.Replace(text, @"\[\[(.*?)\]\]", m =>
-            {
-                string trans = m.Groups[1].Value;
-                Tiddler match = catalog.SingleOrDefault(c => c.Title == trans);
-                if (match == null)
-                    return $"{{{{{trans} (EMPTY REFERENCE)}}}}";
-                else return $"{{{{{trans}}}}}";
-            }); // Replace transclusions
-            return text;
-        }
-        public static string[] ParseCommandLineArguments(string commandLineString)
-        {
-            return Csv.CsvReader.ReadFromText(commandLineString, new Csv.CsvOptions()
-            {
-                HeaderMode = Csv.HeaderMode.HeaderAbsent,
-                Separator = ' '
-            }).First().Values;
+                if (!argument.StartsWith("--"))
+                    throw new ArgumentException($"Invalid argument: {argument}");
+                switch (argument)
+                {
+                    case "--KeepDrafts":
+                        options.KeepDrafts = true;
+                        break;
+                    case "--HighlightLinks":
+                        options.KeepDrafts = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return options;
         }
     }
 }

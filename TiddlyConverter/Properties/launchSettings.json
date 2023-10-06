@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "TiddlyConverter": {
-      "commandName": "Project",
-      "commandLineArgs": "tiddlers.json outputs.md",
-      "workingDirectory": "C:\\Users\\szinu\\Desktop\\Temp"
-    }
-  }
-}

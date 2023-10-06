@@ -13,6 +13,12 @@ If `<Output File/Folder>` ends in `.md`, then it outputs a single MD file, other
 For personal use, developing this utility as a full C# project is overkill; However the benefit is we could publish it as a .exe file.  
 More efficient way of developing this is to use [Pure/Notebook](https://github.com/pure-the-Language/Pure/).
 
+Formatting details:
+
+* Removes "Draft" tiddlers
+* Ignores tiddly icons and colors
+* We use a presumed [KMD style](https://files.totalimagine.com/PDF/KnowledgeMarkdownWorkflow-Presentation_No.1_Rev.0.5.pdf) markdown notation to deal with Tags, etc. This format is not customizable outside the source code, and I do not intend to make it more complicated.
+
 ## Features
 
 * Converst JSON to MD/KMD Style
