@@ -108,28 +108,32 @@ namespace TiddlyConverter
         }
         private static void OutputToFolders(string summary, string folderPath, MarkdownDocument[] mds, ProgramOptions options)
         {
+            HashSet<MarkdownDocument> saved = new();
             Directory.CreateDirectory(folderPath);
+            File.WriteAllText(Path.Combine(folderPath, "Summary.md"), summary);
+
             foreach (var item in mds
                 .Where(t => t.Tags.Contains(MarkdownDocument.SpecialDatedTagName))
                 .OrderBy(t => t.CreateDate))
+            {
                 item.Save(Path.Combine(folderPath, "Dated.md"), true);
+                saved.Add(item);
+            }
 
-            MarkdownDocument[] remaining = mds
-                .Where(t => !t.Tags.Contains(MarkdownDocument.SpecialDatedTagName))
-                .ToArray();
-            HashSet<MarkdownDocument> saved = new();
             foreach (string category in options.OutputCategories)
             {
                 Directory.CreateDirectory(Path.Combine(folderPath, category));
                 Console.WriteLine($"Output category: {category}...");
-                foreach (MarkdownDocument item in remaining
+                foreach (MarkdownDocument item in mds
                     .Where(r => r.Tags.Contains(category) && !saved.Contains(r)))
                 {
                     item.Save(Path.Combine(folderPath, category, $"{item.Title}.md"), false);
                     saved.Add(item);
                 }
             }
-            foreach (var item in remaining.Where(r => !saved.Contains(r)))
+
+            int failedCounter = 0; // Use this counter to guarantee alternative filename uniqueness
+            foreach (MarkdownDocument item in mds.Where(r => !saved.Contains(r)))
             {
                 Directory.CreateDirectory(Path.Combine(folderPath, "Default"));
                 try
@@ -138,7 +142,8 @@ namespace TiddlyConverter
                 }
                 catch (Exception e)
                 {
-                    string alternativeName = $"Item {item.CreateDate:yyyyMMdd}.md";
+                    failedCounter++;
+                    string alternativeName = $"Item {failedCounter} ({item.CreateDate:yyyyMMdd}).md";
                     item.Save(Path.Combine(folderPath, "Default", alternativeName), false);
                     Console.WriteLine($"Issue saving {item.Title}.md: {e.Message}; Save as {alternativeName} instead.");
                 }
