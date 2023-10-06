@@ -1,17 +1,34 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
+    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    <PublishReadyToRun>True</PublishReadyToRun>
+    <PublishSingleFile>True</PublishSingleFile>
+    <PublishTrimmed>True</PublishTrimmed>
+    <Version>0.9.0</Version>
+    <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>Tiddly Converter</Title>
+    <Authors>Charles Zhang</Authors>
+    <Company>TotalImagine.com</Company>
+    <Description>A tool to convert Tiddly Wiki (JSON export) into either a single Markdown or Loose Markdown files.  </Description>
+    <PackageProjectUrl>https://github.com/Charles-Zhang-Redream/TiddlyConverter</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Charles-Zhang-Redream/TiddlyConverter</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Colorful.Console" Version="1.2.15" />
-    <PackageReference Include="ConsoleTables" Version="2.4.2" />
-    <PackageReference Include="Csv" Version="2.0.87" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="ConsoleTables" Version="2.5.0" />
+    <PackageReference Include="Csv" Version="2.0.93" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>
