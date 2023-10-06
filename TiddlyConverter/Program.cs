@@ -50,7 +50,9 @@ namespace TiddlyConverter
 
 
                     """);
-            foreach (var item in mds.OrderBy(t => t.CreateDate))
+            foreach (var item in mds
+                .OrderByDescending(t => t.Tags.Contains(MarkdownDocument.SpecialDatedTagName))
+                .ThenBy(t => t.CreateDate))
             {
                 if (outputFileOrFolderPath.EndsWith(".md"))
                     item.Save(outputFileOrFolderPath, true);

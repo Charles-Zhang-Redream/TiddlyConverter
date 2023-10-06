@@ -7,8 +7,8 @@ namespace TiddlyConverter.Types
     /// </summary>
     public sealed class MarkdownDocument
     {
-        #region Construction
-
+        #region Constants
+        public static readonly string SpecialDatedTagName = "#Dated";
         #endregion
 
         #region Properties
@@ -42,14 +42,17 @@ namespace TiddlyConverter.Types
         {
             StringBuilder builder = new();
             
-            // Title
-            builder.AppendLine($"# {Title}");
+            // Title, deal with #Dated
+            if (Tags.Contains(SpecialDatedTagName))
+                builder.AppendLine($"# {CreateDate:yyyyMMdd} {Title}");
+            else 
+                builder.AppendLine($"# {Title}");
             builder.AppendLine();
 
-            // Tags
+            // Tags, deal with #Dated
             if (Tags.Length != 0)
             {
-                builder.AppendLine($"Tags: {string.Join(", ", Tags.OrderBy(t => t))}");
+                builder.AppendLine($"Tags: {string.Join(", ", Tags.Except(new string[] { SpecialDatedTagName }).OrderBy(t => t))}");
                 builder.AppendLine();
             }
 
