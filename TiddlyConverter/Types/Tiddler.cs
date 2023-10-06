@@ -32,7 +32,7 @@ namespace TiddlyConverter.Types
         /// </summary>
         public string Type;
         /// <summary>
-        /// Don't know what this is; Looks empty for all of the tiddlers we have
+        /// THis is the arbitrary metadata we can assign to Tiddlers; Empty for all of the tiddlers we have
         /// </summary>
         public string List;
 
