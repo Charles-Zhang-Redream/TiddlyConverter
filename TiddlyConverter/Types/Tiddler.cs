@@ -7,6 +7,7 @@ namespace TiddlyConverter.Types
     /// </summary>
     public class Tiddler
     {
+        #region Properties
         /// <summary>
         /// Text content of Tiddler
         /// </summary>
@@ -44,6 +45,7 @@ namespace TiddlyConverter.Types
         /// Color of Tiddler/Tag
         /// </summary>
         public string Color;
+        #endregion
 
         #region Accessors
         /// <summary>

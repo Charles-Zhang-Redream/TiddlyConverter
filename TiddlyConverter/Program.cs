@@ -42,7 +42,8 @@ namespace TiddlyConverter
                     return $"{t} ({count})";
                 }))
             );
-            builder.AppendLine("Categories: " + string.Join(", ", options.OutputCategories.Where(c => converter.UniqueTags.Contains(c))));
+            if (options.OutputCategories.Count > 0)
+                builder.AppendLine("Categories: " + string.Join(", ", options.OutputCategories.Where(c => converter.UniqueTags.Contains(c))));
             string summary = builder.ToString().Trim();
             Console.WriteLine(summary);
 
