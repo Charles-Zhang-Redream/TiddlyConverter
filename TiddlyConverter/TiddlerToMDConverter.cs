@@ -1,10 +1,10 @@
-﻿using System.Drawing;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Text;
 using TiddlyConverter.Types;
-using Console = Colorful.Console;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using System.Runtime.InteropServices;
 
 namespace TiddlyConverter
 {
@@ -13,6 +13,21 @@ namespace TiddlyConverter
     /// </summary>
     public sealed partial class TiddlerToMDConverter
     {
+        #region Colorful Console
+        const int STD_OUTPUT_HANDLE = -11;
+        const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr GetStdHandle(int nStdHandle);
+
+        [DllImport("kernel32.dll")]
+        static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+
+        [DllImport("kernel32.dll")]
+        static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+
+        #endregion
+
         #region Properties
         /// <summary>
         /// Original tiddlers
@@ -47,12 +62,21 @@ namespace TiddlyConverter
         /// </summary>
         public MarkdownDocument[] Convert(ProgramOptions options)
         {
+            // Enable ANSI processing
+            nint iStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+            GetConsoleMode(iStdOut, out uint outMode);
+            SetConsoleMode(iStdOut, outMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+
             // Filtering
             Tiddler[] filtered = Tiddlers;
             if (!options.KeepDrafts)
             {
+                // ANSI escape for 24‑bit foreground: \x1b[38;2;<R>;<G>;<B>m
+                Console.Write("\x1b[38;2;218;165;32m");         // GoldenRod
                 foreach (Tiddler item in Tiddlers.Where(t => DraftTiddlerTitleRegex().IsMatch(t.Title)))
-                    Console.WriteLine($"Ignored {item.Title}: {(string.IsNullOrEmpty(item.Text) ? "(Empty)" : item.Text)}", Color.Goldenrod);
+                    Console.WriteLine($"Ignored {item.Title}: {(string.IsNullOrEmpty(item.Text) ? "(Empty)" : item.Text)}");
+                Console.Write("\x1b[0m");                       // Reset back to default
+
                 filtered = [.. Tiddlers.Where(t => !DraftTiddlerTitleRegex().IsMatch(t.Title))];
             }
 

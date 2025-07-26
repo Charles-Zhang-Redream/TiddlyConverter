@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TiddlyConverter.Types;
-using Console = Colorful.Console;
 
 namespace TiddlyConverter
 {
