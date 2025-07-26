@@ -22,7 +22,7 @@ namespace TiddlyConverter.Types
         /// <summary>
         /// Defines output categories which are defined as keys which will automatically be generated as folders or top level markdown header
         /// </summary>
-        public List<string> OutputCategories { get; set; } = new();
+        public List<string> OutputCategories { get; set; } = [];
         #endregion
     }
 }

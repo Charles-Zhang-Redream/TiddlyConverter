@@ -53,21 +53,21 @@ namespace TiddlyConverter
             {
                 foreach (Tiddler item in Tiddlers.Where(t => DraftTiddlerTitleRegex().IsMatch(t.Title)))
                     Console.WriteLine($"Ignored {item.Title}: {(string.IsNullOrEmpty(item.Text) ? "(Empty)" : item.Text)}", Color.Goldenrod);
-                 filtered = Tiddlers.Where(t => !DraftTiddlerTitleRegex().IsMatch(t.Title)).ToArray();
+                filtered = [.. Tiddlers.Where(t => !DraftTiddlerTitleRegex().IsMatch(t.Title))];
             }
 
             // Statistics
             UsefulTiddlers = filtered.Length;
             UniqueTags = [.. filtered.SelectMany(t => t.TagsArray)];
 
-            return filtered.Select(f => new MarkdownDocument()
+            return [.. filtered.Select(f => new MarkdownDocument()
             {
                 Title = f.Title,
                 Content = FormatTiddlyWikiTextToMD(f.Type, f.Text, filtered, options),
                 CreateDate = f.CreatedDate,
                 ModificationDate = f.ModifiedDate,
                 Tags = f.TagsArray
-            }).ToArray();
+            })];
         }
         #endregion
 
@@ -112,7 +112,7 @@ namespace TiddlyConverter
             {
                 string content = m.Groups[1].Value.Trim();
                 if (content.StartsWith(".tc-big-quote"))
-                    content = content.Substring(".tc-big-quote".Length).Trim();
+                    content = content[".tc-big-quote".Length..].Trim();
                 return Regex.Replace(content, $"^(.*)$", "> $1", RegexOptions.Multiline);
             }, RegexOptions.Singleline);
             

@@ -47,7 +47,7 @@ namespace TiddlyConverter
                 }))
             );
             if (options.OutputCategories.Count > 0)
-                builder.AppendLine("Categories: " + string.Join(", ", options.OutputCategories.Where(c => converter.UniqueTags.Contains(c))));
+                builder.AppendLine("Categories: " + string.Join(", ", options.OutputCategories.Where(converter.UniqueTags.Contains)));
             string summary = builder.ToString().Trim();
             Console.WriteLine(summary);
 
@@ -113,7 +113,7 @@ namespace TiddlyConverter
         }
         private static void OutputToFolders(string summary, string folderPath, MarkdownDocument[] mds, ProgramOptions options)
         {
-            HashSet<MarkdownDocument> saved = new();
+            HashSet<MarkdownDocument> saved = [];
             Directory.CreateDirectory(folderPath);
             File.WriteAllText(Path.Combine(folderPath, "Summary.md"), summary);
 

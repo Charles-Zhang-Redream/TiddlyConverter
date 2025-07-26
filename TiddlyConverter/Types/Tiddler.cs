@@ -74,7 +74,7 @@ namespace TiddlyConverter.Types
         public static string[] ParseTags(string tiddlyWikiTags)
         {
             if (string.IsNullOrWhiteSpace(tiddlyWikiTags))
-                return Array.Empty<string>();
+                return [];
             string escaped = Regex.Replace(tiddlyWikiTags, @"\[\[(.*?)\]\]", "\"$1\"");
             return ParseCommandLineArguments(escaped);
         }
