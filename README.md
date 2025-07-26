@@ -43,6 +43,7 @@ If `<Output File/Folder>` ends in `.md`, then it outputs a single MD file, other
 Formatting:
 
 - [ ] Pending quickly auto-subheader of Tiddlers that's already written in Markdown; This can be identified with `"type": "text/x-marked"`
+- [ ] Verify and enhance auto-conversion of Tiddly Wiki format to Markdown
 
 Issues
 
