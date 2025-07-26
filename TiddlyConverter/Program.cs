@@ -37,7 +37,12 @@ namespace TiddlyConverter
             string outputFileOrFolderPath = args[1];
             ProgramOptions options = ParseAdditionalOptions(args.Skip(2));
 
-            Tiddler[] wiki = JsonSerializer.Deserialize<Tiddler[]>(File.ReadAllText(jsonFile), TiddlerJsonContext.Default.TiddlerArray);
+            JsonSerializerOptions jsonOptions = new()
+            {
+                TypeInfoResolver = TiddlerJsonContext.Default,
+                PropertyNameCaseInsensitive = true
+            };
+            Tiddler[] wiki = JsonSerializer.Deserialize<Tiddler[]>(File.ReadAllText(jsonFile), jsonOptions);
             TiddlerToMDConverter converter = new(wiki);
             MarkdownDocument[] mds = converter.Convert(options);
             // Statistics summary
