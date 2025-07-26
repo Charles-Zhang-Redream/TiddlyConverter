@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace TiddlyConverter.Types
 {
@@ -52,7 +55,7 @@ namespace TiddlyConverter.Types
             // Tags, deal with #Dated
             if (Tags.Length != 0)
             {
-                builder.AppendLine($"Tags: {string.Join(", ", Tags.Except(new string[] { SpecialDatedTagName }).OrderBy(t => t))}");
+                builder.AppendLine($"Tags: {string.Join(", ", Tags.Except([SpecialDatedTagName]).OrderBy(t => t))}");
                 builder.AppendLine();
             }
 

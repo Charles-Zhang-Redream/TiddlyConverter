@@ -1,4 +1,6 @@
-﻿namespace TiddlyConverter.Types
+﻿using System.Collections.Generic;
+
+namespace TiddlyConverter.Types
 {
     /// <summary>
     /// Overall parsing and output related options

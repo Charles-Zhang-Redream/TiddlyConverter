@@ -3,6 +3,8 @@ using System.Text.RegularExpressions;
 using System.Text;
 using TiddlyConverter.Types;
 using Console = Colorful.Console;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TiddlyConverter
 {
@@ -56,7 +58,7 @@ namespace TiddlyConverter
 
             // Statistics
             UsefulTiddlers = filtered.Length;
-            UniqueTags = new HashSet<string>(filtered.SelectMany(t => t.TagsArray));
+            UniqueTags = [.. filtered.SelectMany(t => t.TagsArray)];
 
             return filtered.Select(f => new MarkdownDocument()
             {
