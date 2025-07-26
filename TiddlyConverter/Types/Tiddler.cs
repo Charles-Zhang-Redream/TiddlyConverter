@@ -13,40 +13,40 @@ namespace TiddlyConverter.Types
         /// <summary>
         /// Text content of Tiddler
         /// </summary>
-        public string Text;
+        public string Text { get; set; }
         /// <summary>
         /// Title of Tiddler
         /// </summary>
-        public string Title;
+        public string Title { get; set; }
         /// <summary>
         /// Tags of Tiddler; Will lost tag color and shape information (but available separately as Icon and Color); Space delimited
         /// </summary>
-        public string Tags;
+        public string Tags { get; set; }
         /// <summary>
         /// Modified Date of Tiddler
         /// </summary>
-        public string Modified;
+        public string Modified { get; set; }
         /// <summary>
         /// Created date of Tiddler
         /// </summary>
-        public string Created;
+        public string Created { get; set; }
         /// <summary>
         /// Type of Tiddler; Default empty; For markdown extension, it's: text/x-markdown
         /// </summary>
-        public string Type;
+        public string Type { get; set; }
         /// <summary>
         /// THis is the arbitrary metadata we can assign to Tiddlers; Empty for all of the tiddlers we have
         /// </summary>
-        public string List;
+        public string List { get; set; }
 
         /// <summary>
         /// Color of Tiddler/Tag
         /// </summary>
-        public string Icon;
+        public string Icon { get; set; }
         /// <summary>
         /// Color of Tiddler/Tag
         /// </summary>
-        public string Color;
+        public string Color { get; set; }
         #endregion
 
         #region Accessors

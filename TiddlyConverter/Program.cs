@@ -1,15 +1,21 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using TiddlyConverter.Types;
 using Console = Colorful.Console;
 
 namespace TiddlyConverter
 {
+    [JsonSerializable(typeof(Tiddler[]))]
+    public partial class TiddlerJsonContext : JsonSerializerContext
+    {
+    }
+
     internal static class Program
     {
         #region Main
@@ -31,8 +37,8 @@ namespace TiddlyConverter
             string outputFileOrFolderPath = args[1];
             ProgramOptions options = ParseAdditionalOptions(args.Skip(2));
 
-            Tiddler[] wiki = JsonConvert.DeserializeObject<Tiddler[]>(File.ReadAllText(jsonFile));
-            TiddlerToMDConverter converter = new TiddlerToMDConverter(wiki);
+            Tiddler[] wiki = JsonSerializer.Deserialize<Tiddler[]>(File.ReadAllText(jsonFile), TiddlerJsonContext.Default.TiddlerArray);
+            TiddlerToMDConverter converter = new(wiki);
             MarkdownDocument[] mds = converter.Convert(options);
             // Statistics summary
             StringBuilder builder = new();
