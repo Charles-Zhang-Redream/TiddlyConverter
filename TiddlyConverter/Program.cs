@@ -93,7 +93,7 @@ namespace TiddlyConverter
 
             string currentState = null;
             ProgramOptions options = new();
-            foreach (var argument in arguments)
+            foreach (string argument in arguments)
             {
                 if (argument.StartsWith("--"))
                 {
@@ -127,7 +127,7 @@ namespace TiddlyConverter
             Directory.CreateDirectory(folderPath);
             File.WriteAllText(Path.Combine(folderPath, "Summary.md"), summary);
 
-            foreach (var item in mds
+            foreach (MarkdownDocument? item in mds
                 .Where(t => t.Tags.Contains(MarkdownDocument.SpecialDatedTagName))
                 .OrderBy(t => t.CreateDate))
             {

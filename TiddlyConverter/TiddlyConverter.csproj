@@ -26,8 +26,4 @@
     <Content Include="Icon.ico" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Csv" Version="2.0.93" />
-  </ItemGroup>
-
 </Project>

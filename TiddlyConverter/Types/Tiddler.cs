@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
+using System.Collections.Generic;
+using System.Text;
 
 namespace TiddlyConverter.Types
 {
@@ -69,26 +69,67 @@ namespace TiddlyConverter.Types
 
         #region Helpers
         /// <summary>
-        /// Split tags
+        /// Split TiddlyWiki‑style tags into individual tag strings.
+        /// [[…]] sequences become one tag (without the brackets), 
+        /// everything else is split on whitespace.
         /// </summary>
+        /// <remarks>
+        /// In Tiddly Wiki export, the pattern is that if there is space then they use `[[]]`, otherwise tags are seperated by space.
+        /// E.g. 
+        /// [[Rank - Affection]] ~阿May 夢のノート
+        /// [[Dream Observation]]
+        /// ~原生人物 [[Rank - Weird]] 夢のノート Rank
+        /// </remarks>
         public static string[] ParseTags(string tiddlyWikiTags)
         {
             if (string.IsNullOrWhiteSpace(tiddlyWikiTags))
                 return [];
-            string escaped = Regex.Replace(tiddlyWikiTags, @"\[\[(.*?)\]\]", "\"$1\"");
-            return ParseCommandLineArguments(escaped);
-        }
-        /// <summary>
-        /// Split string as CLI argument style
-        /// </summary>
-        public static string[] ParseCommandLineArguments(string commandLineString)
-        {
-            return Csv.CsvReader.ReadFromText($"{commandLineString}", new Csv.CsvOptions()
+
+            List<string> tags = [];
+            string s = tiddlyWikiTags;
+            int len = s.Length;
+            int i = 0;
+
+            while (i < len)
             {
-                HeaderMode = Csv.HeaderMode.HeaderAbsent,
-                Separator = ' ',
-                SkipRow = (row, index) => false, // Disable skipping "comments" for some of the items might start with a `#` as tag name
-            }).First().Values;
+                // Skip any leading whitespace
+                while (i < len && char.IsWhiteSpace(s[i]))
+                    i++;
+                if (i >= len)
+                    break;
+
+                if (i + 1 < len && s[i] == '[' && s[i + 1] == '[')
+                {
+                    // Found a [[…]] tag
+                    i += 2;  // skip "[["
+                    StringBuilder sb = new StringBuilder();
+                    // read until closing "]]" or end of string
+                    while (i + 1 < len && !(s[i] == ']' && s[i + 1] == ']'))
+                    {
+                        sb.Append(s[i]);
+                        i++;
+                    }
+                    tags.Add(sb.ToString());
+                    // skip the closing "]]" (if present)
+                    if (i + 1 < len)
+                        i += 2;
+                    else
+                        i = len;
+                }
+                else
+                {
+                    // ordinary tag: read until next whitespace
+                    StringBuilder sb = new StringBuilder();
+                    while (i < len && !char.IsWhiteSpace(s[i]))
+                    {
+                        sb.Append(s[i]);
+                        i++;
+                    }
+                    tags.Add(sb.ToString());
+                }
+            }
+
+            return tags.ToArray();
         }
         #endregion
     }

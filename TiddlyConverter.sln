@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TiddlyConverter.UnitTests", "TiddlyConverter.UnitTests\TiddlyConverter.UnitTests.csproj", "{483C1344-A53C-4F3B-A0D7-021CC6A72E7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{6D4D37CF-85F3-4413-BA97-A189CD815BAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D4D37CF-85F3-4413-BA97-A189CD815BAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D4D37CF-85F3-4413-BA97-A189CD815BAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{483C1344-A53C-4F3B-A0D7-021CC6A72E7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{483C1344-A53C-4F3B-A0D7-021CC6A72E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{483C1344-A53C-4F3B-A0D7-021CC6A72E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{483C1344-A53C-4F3B-A0D7-021CC6A72E7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

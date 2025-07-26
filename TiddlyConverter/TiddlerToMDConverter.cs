@@ -158,7 +158,7 @@ namespace TiddlyConverter
                 string key = Regex.Match(content, "<<toc-selective-expandable '(.*?)'>>").Groups[1].Value;
                 IEnumerable<Tiddler> items = catalog.Where(c => c.TagsArray.Contains(key));
                 StringBuilder toc = new();
-                foreach (var item in items)
+                foreach (Tiddler item in items)
                     toc.AppendLine($"* {item.Title}");
                 return $"""
                     TABLE OF CONTENTS ({key}):
