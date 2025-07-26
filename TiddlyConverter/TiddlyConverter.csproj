@@ -16,7 +16,6 @@
     <PackageProjectUrl>https://github.com/Charles-Zhang-Redream/TiddlyConverter</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Charles-Zhang-Redream/TiddlyConverter</RepositoryUrl>
     <PublishReadyToRun>True</PublishReadyToRun>
-    <PublishSingleFile>True</PublishSingleFile>
     <PublishAot>true</PublishAot>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
