@@ -2,7 +2,7 @@
 
 Initial date: 2022-09-17
 Last update: 2025-07-25
-Version: 1.0.1
+Version: 1.5
 
 Tiddly Wiki is very efficient, inspirational and productive in quickly collecting ideas and concepts, but as projects grows, it soon run into performance issues due to the way Tiddlers are structured.  
 It's recommended that one install no extensions besides maybe Markdown extension, so as to minimize potential hassle when migrating contents. E.g. Don't rely on Tiddly Map extension.
@@ -48,3 +48,8 @@ Issues
 
 - [x] (Unsolved) I tried using `dotnet publish --use-current-runtime` and in csproj set `PublishReadyToRun`, `PublishSingleFile` and `PublishTrimmed` but the final ouptut is still 30+MB for a single CLI program. That's 30MB way too big.
 	* (Remark) That's .Net 7. The framework is included in the final exe. With AoT, that should be smaller.
+
+## Changelog
+
+* v1.0.1: Initial publication.
+* v1.5: Clean, aot.
